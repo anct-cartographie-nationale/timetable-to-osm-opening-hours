@@ -21,15 +21,13 @@ const ofDay =
   (day: OsmDaysOfWeek): boolean =>
     day === previousLastDay;
 
+const daysOffHours = (days: OsmDaysOfWeek[]): OsmWeekOpeningHours => ({
+  days,
+  osmHours: 'off'
+});
+
 const openingHoursDaysOffIfAny = (newDaysOff: OsmDaysOfWeek[]): OsmWeekOpeningHours[] =>
-  newDaysOff.length > 0
-    ? [
-        {
-          days: newDaysOff,
-          osmHours: 'off'
-        }
-      ]
-    : [];
+  newDaysOff.length > 0 ? [daysOffHours(newDaysOff)] : [];
 
 const workingDays =
   (currentOpeningHour: OsmWeekOpeningHours) =>
