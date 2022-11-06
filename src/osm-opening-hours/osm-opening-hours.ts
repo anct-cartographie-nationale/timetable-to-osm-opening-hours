@@ -1,5 +1,5 @@
 /* eslint-disable-next-line @typescript-eslint/sort-type-union-intersection-members */
-type OsmDaysOfWeek = 'Mo' | 'Tu' | 'We' | 'Th' | 'Fr' | 'Sa' | 'Su';
+export type OsmDaysOfWeek = 'Mo' | 'Tu' | 'We' | 'Th' | 'Fr' | 'Sa' | 'Su';
 
 export type OsmOpeningHours = {
   day: OsmDaysOfWeek;
