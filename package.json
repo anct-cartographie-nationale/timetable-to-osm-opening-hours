@@ -46,6 +46,9 @@
     "build.esm": "tsc -p ./.tsconfig/tsconfig.esm.json",
     "build": "yarn build.commonjs && yarn build.esm"
   },
+  "dependencies": {
+    "opening_hours": "^3.8.0"
+  },
   "devDependencies": {
     "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^17.1.0",

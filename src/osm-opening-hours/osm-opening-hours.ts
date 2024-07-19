@@ -1,17 +1,10 @@
 /* eslint-disable-next-line @typescript-eslint/sort-type-union-intersection-members */
-export type OsmDaysOfWeek = 'Mo' | 'Tu' | 'We' | 'Th' | 'Fr' | 'Sa' | 'Su';
-
-export type OsmOpeningHours = {
-  day: OsmDaysOfWeek;
-  osmHours: string;
-};
+import {OSM_DAYS_OF_WEEK, OsmDaysOfWeek, OsmOpeningHours} from '../utilities';
 
 export type OsmWeekOpeningHours = {
   days: OsmDaysOfWeek[];
   osmHours: string;
 };
-
-const OSM_DAYS_OF_WEEK: OsmDaysOfWeek[] = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
 const daysBetween = (startDayIndex: number, endDayIndex: number): OsmDaysOfWeek[] =>
   OSM_DAYS_OF_WEEK.filter((_: OsmDaysOfWeek, index: number): boolean => index > startDayIndex && index < endDayIndex);

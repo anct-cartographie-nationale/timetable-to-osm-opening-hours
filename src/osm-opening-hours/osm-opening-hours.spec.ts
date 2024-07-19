@@ -1,4 +1,5 @@
-import { OsmOpeningHours, toOsmOpeningHours } from './osm-opening-hours';
+import { OsmOpeningHours } from '../utilities';
+import { toOsmOpeningHours } from './osm-opening-hours';
 
 describe('osm opening hours', (): void => {
   it("devrait convertir les horaires au format OSM pour une permanence qui n'ouvre aucun jour de la semaine", (): void => {
