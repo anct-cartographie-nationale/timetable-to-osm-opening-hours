@@ -1,11 +1,11 @@
 import { OsmOpeningHours } from '../utilities';
-import { toOsmOpeningHours } from './osm-opening-hours';
+import { fromTimetableOsmOpeningHours } from './from-timetable-osm-opening-hours';
 
 describe('osm opening hours', (): void => {
   it("devrait convertir les horaires au format OSM pour une permanence qui n'ouvre aucun jour de la semaine", (): void => {
     const openingHours: OsmOpeningHours[] = [];
 
-    const osmOpeningHours: string = toOsmOpeningHours(openingHours);
+    const osmOpeningHours: string = fromTimetableOsmOpeningHours(openingHours);
 
     expect(osmOpeningHours).toBe('');
   });
@@ -18,7 +18,7 @@ describe('osm opening hours', (): void => {
       }
     ];
 
-    const osmOpeningHours: string = toOsmOpeningHours(openingHours);
+    const osmOpeningHours: string = fromTimetableOsmOpeningHours(openingHours);
 
     expect(osmOpeningHours).toBe('Mo 10:00-12:00');
   });
@@ -31,7 +31,7 @@ describe('osm opening hours', (): void => {
       }
     ];
 
-    const osmOpeningHours: string = toOsmOpeningHours(openingHours);
+    const osmOpeningHours: string = fromTimetableOsmOpeningHours(openingHours);
 
     expect(osmOpeningHours).toBe('Mo 14:00-18:00');
   });
@@ -44,7 +44,7 @@ describe('osm opening hours', (): void => {
       }
     ];
 
-    const osmOpeningHours: string = toOsmOpeningHours(openingHours);
+    const osmOpeningHours: string = fromTimetableOsmOpeningHours(openingHours);
 
     expect(osmOpeningHours).toBe('Mo 10:00-12:00,14:00-18:00');
   });
@@ -81,7 +81,7 @@ describe('osm opening hours', (): void => {
       }
     ];
 
-    const osmOpeningHours: string = toOsmOpeningHours(openingHours);
+    const osmOpeningHours: string = fromTimetableOsmOpeningHours(openingHours);
 
     // eslint-disable-next-line max-len
     expect(osmOpeningHours).toBe(
@@ -113,7 +113,7 @@ describe('osm opening hours', (): void => {
       }
     ];
 
-    const osmOpeningHours: string = toOsmOpeningHours(openingHours);
+    const osmOpeningHours: string = fromTimetableOsmOpeningHours(openingHours);
 
     expect(osmOpeningHours).toBe('Mo-Fr 8:00-12:00,15:00-18:00');
   });
@@ -138,7 +138,7 @@ describe('osm opening hours', (): void => {
       }
     ];
 
-    const osmOpeningHours: string = toOsmOpeningHours(openingHours);
+    const osmOpeningHours: string = fromTimetableOsmOpeningHours(openingHours);
 
     expect(osmOpeningHours).toBe('Mo-Fr 8:00-12:00,15:00-18:00; We off');
   });
@@ -159,7 +159,7 @@ describe('osm opening hours', (): void => {
       }
     ];
 
-    const osmOpeningHours: string = toOsmOpeningHours(openingHours);
+    const osmOpeningHours: string = fromTimetableOsmOpeningHours(openingHours);
 
     expect(osmOpeningHours).toBe('Mo-Fr 8:00-12:00,15:00-18:00; We,Th off');
   });
@@ -180,7 +180,7 @@ describe('osm opening hours', (): void => {
       }
     ];
 
-    const osmOpeningHours: string = toOsmOpeningHours(openingHours);
+    const osmOpeningHours: string = fromTimetableOsmOpeningHours(openingHours);
 
     expect(osmOpeningHours).toBe('Mo-Fr 8:00-12:00,15:00-18:00; Tu,Th off');
   });
@@ -201,7 +201,7 @@ describe('osm opening hours', (): void => {
       }
     ];
 
-    const osmOpeningHours: string = toOsmOpeningHours(openingHours);
+    const osmOpeningHours: string = fromTimetableOsmOpeningHours(openingHours);
 
     expect(osmOpeningHours).toBe('Tu-Fr 8:00-12:00,15:00-18:00; We off');
   });
@@ -238,7 +238,7 @@ describe('osm opening hours', (): void => {
       }
     ];
 
-    const osmOpeningHours: string = toOsmOpeningHours(openingHours);
+    const osmOpeningHours: string = fromTimetableOsmOpeningHours(openingHours);
 
     expect(osmOpeningHours).toBe('8:00-12:00,15:00-18:00');
   });
@@ -263,7 +263,7 @@ describe('osm opening hours', (): void => {
       }
     ];
 
-    const osmOpeningHours: string = toOsmOpeningHours(openingHours);
+    const osmOpeningHours: string = fromTimetableOsmOpeningHours(openingHours);
 
     expect(osmOpeningHours).toBe('8:00-12:00,15:00-18:00; Th-Sa off');
   });
@@ -288,7 +288,7 @@ describe('osm opening hours', (): void => {
       }
     ];
 
-    const osmOpeningHours: string = toOsmOpeningHours(openingHours);
+    const osmOpeningHours: string = fromTimetableOsmOpeningHours(openingHours);
 
     expect(osmOpeningHours).toBe('We,Sa 10:00-12:00,14:00-18:00; Th,Fr 13:30-18:00');
   });
@@ -317,7 +317,7 @@ describe('osm opening hours', (): void => {
       }
     ];
 
-    const osmOpeningHours: string = toOsmOpeningHours(openingHours);
+    const osmOpeningHours: string = fromTimetableOsmOpeningHours(openingHours);
 
     expect(osmOpeningHours).toBe('Mo,Th 7:30-16:30; Tu,We 7:30-14:30; Fr 7:30-12:30');
   });
@@ -350,7 +350,7 @@ describe('osm opening hours', (): void => {
       }
     ];
 
-    const osmOpeningHours: string = toOsmOpeningHours(openingHours);
+    const osmOpeningHours: string = fromTimetableOsmOpeningHours(openingHours);
 
     expect(osmOpeningHours).toBe(
       'Tu-Fr 09:00-12:00,14:30-17:30; Mo 09:00-12:00,14:30-17:00; We 09:00-12:00,14:00-17:00; Sa 09:00-12:00'
@@ -381,7 +381,7 @@ describe('osm opening hours', (): void => {
       }
     ];
 
-    const osmOpeningHours: string = toOsmOpeningHours(openingHours);
+    const osmOpeningHours: string = fromTimetableOsmOpeningHours(openingHours);
 
     expect(osmOpeningHours).toBe('Mo-Fr 16:00-18:30; We 09:30-12:00,14:00-18:30; Sa 09:30-12:30,14:00-17:30; Th off');
   });
@@ -410,7 +410,7 @@ describe('osm opening hours', (): void => {
       }
     ];
 
-    const osmOpeningHours: string = toOsmOpeningHours(openingHours);
+    const osmOpeningHours: string = fromTimetableOsmOpeningHours(openingHours);
 
     expect(osmOpeningHours).toBe('Tu-Fr 09:00-12:00,14:00-18:00; Mo,Th 14:00-18:00');
   });
@@ -443,7 +443,7 @@ describe('osm opening hours', (): void => {
       }
     ];
 
-    const osmOpeningHours: string = toOsmOpeningHours(openingHours);
+    const osmOpeningHours: string = fromTimetableOsmOpeningHours(openingHours);
 
     expect(osmOpeningHours).toBe('Mo-Sa 09:00-12:00; We-Fr 09:00-12:00,14:00-18:00'); // (89)
   });

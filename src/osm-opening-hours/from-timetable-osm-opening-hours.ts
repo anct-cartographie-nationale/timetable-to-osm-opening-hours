@@ -1,5 +1,5 @@
 /* eslint-disable-next-line @typescript-eslint/sort-type-union-intersection-members */
-import {OSM_DAYS_OF_WEEK, OsmDaysOfWeek, OsmOpeningHours} from '../utilities';
+import { OSM_DAYS_OF_WEEK, OsmDaysOfWeek, OsmOpeningHours } from '../utilities';
 
 export type OsmWeekOpeningHours = {
   days: OsmDaysOfWeek[];
@@ -125,7 +125,7 @@ const groupOpeningHoursDaysByHours = (
   )
 ];
 
-export const toOsmOpeningHours = (horaires: OsmOpeningHours[]): string =>
+export const fromTimetableOsmOpeningHours = (horaires: OsmOpeningHours[]): string =>
   horaires
     .reduce(groupOpeningHoursDaysByHours, [])
     .sort(byDayOfWeek)
