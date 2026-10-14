@@ -1,9 +1,16 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
-import { Schedule } from '../utilities';
+import { CLOSED_SCHEDULE, Schedule } from '../utilities';
 import { toTimetableOpeningHours } from './to-timetable-opening-hours';
 
 describe('horaires presenter', (): void => {
+  it('should get a closed schedule from empty osm opening hours', (): void => {
+    const date: Date = new Date('2022-07-22T09:00:00.000Z');
+
+    expect(toTimetableOpeningHours(date)('')).toStrictEqual(CLOSED_SCHEDULE);
+    expect(toTimetableOpeningHours(date)('  ')).toStrictEqual(CLOSED_SCHEDULE);
+  });
+
   it('should get time table opening hours from osm opening hours, open every working day', (): void => {
     const openingHours: string = 'Mo-Fr 09:00-12:00,14:00-18:30';
     const date: Date = new Date('2022-07-22T09:00:00.000Z');

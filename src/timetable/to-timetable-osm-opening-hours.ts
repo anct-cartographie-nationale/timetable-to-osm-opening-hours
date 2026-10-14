@@ -78,7 +78,7 @@ const dayOfWeek = ([intervalStart]: OsmInterval): OsmDaysOfWeek => OSM_DAYS_OF_W
 export const toTimetableOsmOpeningHours =
   (date: Date) =>
   (horairesOSM?: string): OsmOpeningHours[] =>
-    horairesOSM == null
+    horairesOSM == null || horairesOSM.trim() === ''
       ? []
       : new opening_hours(horairesOSM, null)
           .getOpenIntervals(firstTimeOfTheDay(firstDayOfTheWeek(date)), lastTimeOfTheDay(lastDayOfTheWeek(date)))
