@@ -11,6 +11,28 @@ describe('horaires presenter', (): void => {
     expect(toTimetableOpeningHours(date)('  ')).toStrictEqual(CLOSED_SCHEDULE);
   });
 
+  it('should get an afternoon opening when the only time range starts at noon', (): void => {
+    const date: Date = new Date('2022-07-22T09:00:00.000Z');
+
+    const timetableOpeningHours: Schedule = toTimetableOpeningHours(date)('Mo 12:30-18:00');
+
+    expect(timetableOpeningHours.Mo).toStrictEqual({
+      am: { startTime: null, endTime: null, isOpen: false },
+      pm: { startTime: '12:30', endTime: '18:00', isOpen: true }
+    });
+  });
+
+  it('should get a morning opening when the only time range starts before noon', (): void => {
+    const date: Date = new Date('2022-07-22T09:00:00.000Z');
+
+    const timetableOpeningHours: Schedule = toTimetableOpeningHours(date)('Mo 11:30-14:00');
+
+    expect(timetableOpeningHours.Mo).toStrictEqual({
+      am: { startTime: '11:30', endTime: '14:00', isOpen: true },
+      pm: { startTime: null, endTime: null, isOpen: false }
+    });
+  });
+
   it('should get time table opening hours from osm opening hours, open every working day', (): void => {
     const openingHours: string = 'Mo-Fr 09:00-12:00,14:00-18:30';
     const date: Date = new Date('2022-07-22T09:00:00.000Z');

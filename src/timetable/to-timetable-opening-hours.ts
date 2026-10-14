@@ -1,7 +1,7 @@
 import { CLOSED_SCHEDULE, DaySchedule, NullableTime, OsmOpeningHours, Schedule, Time, TimeRange } from '../utilities';
 import { toTimetableOsmOpeningHours } from './to-timetable-osm-opening-hours';
 
-const isAfternoonTime = (time: NullableTime): boolean => +(time?.split(':').at(0) ?? 0) > 12;
+const isAfternoonTime = (time: NullableTime): boolean => +(time?.split(':').at(0) ?? 0) >= 12;
 
 const createTimeSlot = ([[amStart, amEnd], [pmStart, pmEnd]]: [TimeRange, TimeRange]): DaySchedule => ({
   am: { startTime: amStart, endTime: amEnd, isOpen: ![amStart, amEnd].includes(null) },
