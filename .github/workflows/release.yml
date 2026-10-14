@@ -11,38 +11,35 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    uses: romain-cambonie/serenity-workflows/.github/workflows/_build-and-upload-artifact.reusable.yml@master
-    with:
-      out-dir: lib
-
   validation:
-    uses: romain-cambonie/serenity-workflows/.github/workflows/_validation-matrix.reusable.yml@master
-    with:
-      commands-as-comma-separated-string: 'lint,prettier.check,test'
+    uses: ./.github/workflows/_validation.yml
 
   publish:
     name: Publish package on npm
     runs-on: ubuntu-latest
     needs:
-      - build
       - validation
 
     steps:
       - name: Checkout timetable-to-osm-opening-hours repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
+          cache: pnpm
 
-      - name: Download release artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: bundle
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
 
       # Using a symbolic link because there is no base option to have a config path with semantic-release as of 2022-08-31
       - name: Link the semantic release config and release

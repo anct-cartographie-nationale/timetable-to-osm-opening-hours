@@ -17,7 +17,7 @@ Voir [la spécification OpenStreetMap opening hours](https://wiki.openstreetmap.
 ## Installation
 
 ```bash
-yarn add @gouvfr-anct/timetable-to-osm-opening-hours
+pnpm add @gouvfr-anct/timetable-to-osm-opening-hours
 ```
 
 ## Usage
