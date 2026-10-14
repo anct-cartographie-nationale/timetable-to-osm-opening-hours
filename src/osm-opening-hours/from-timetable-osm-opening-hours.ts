@@ -6,131 +6,88 @@ export type OsmWeekOpeningHours = {
   osmHours: string;
 };
 
-const daysBetween = (startDayIndex: number, endDayIndex: number): OsmDaysOfWeek[] =>
-  OSM_DAYS_OF_WEEK.filter((_: OsmDaysOfWeek, index: number): boolean => index > startDayIndex && index < endDayIndex);
+const dayIndex = (day: OsmDaysOfWeek): number => OSM_DAYS_OF_WEEK.indexOf(day);
 
-const ofDay =
-  (previousLastDay?: OsmDaysOfWeek) =>
-  (day: OsmDaysOfWeek): boolean =>
-    day === previousLastDay;
-
-const daysOffHours = (days: OsmDaysOfWeek[]): OsmWeekOpeningHours => ({
-  days,
-  osmHours: 'off'
-});
-
-const openingHoursDaysOffIfAny = (newDaysOff: OsmDaysOfWeek[]): OsmWeekOpeningHours[] =>
-  newDaysOff.length > 0 ? [daysOffHours(newDaysOff)] : [];
-
-const workingDays =
-  (currentOpeningHour: OsmWeekOpeningHours) =>
-  (day: OsmDaysOfWeek): boolean =>
-    !currentOpeningHour.days.includes(day);
-
-const daysOffToAdd = (currentOpeningHours: OsmWeekOpeningHours): OsmDaysOfWeek[] =>
-  daysBetween(
-    OSM_DAYS_OF_WEEK.findIndex(ofDay(currentOpeningHours.days[0])),
-    OSM_DAYS_OF_WEEK.findIndex(ofDay(currentOpeningHours.days.slice(-1)[0]))
-  ).filter(workingDays(currentOpeningHours));
+const byDayOfWeek = (day1: OsmDaysOfWeek, day2: OsmDaysOfWeek): number => dayIndex(day1) - dayIndex(day2);
 
 const isDaysRange = (days: OsmDaysOfWeek[]): boolean => days.length > 2;
 
-const getDaysOff = (
-  currentOpeningHour: OsmWeekOpeningHours,
-  previousOpeningHoursDaysOff?: OsmWeekOpeningHours
-): OsmWeekOpeningHours[] => {
-  if (isDaysRange(currentOpeningHour.days)) {
-    return openingHoursDaysOffIfAny([
-      ...(previousOpeningHoursDaysOff?.days.filter(workingDays(currentOpeningHour)) ?? []),
-      ...daysOffToAdd(currentOpeningHour)
-    ]);
-  }
-  if (previousOpeningHoursDaysOff != null) {
-    return openingHoursDaysOffIfAny(previousOpeningHoursDaysOff.days.filter(workingDays(currentOpeningHour)));
-  }
+const firstDay = (days: OsmDaysOfWeek[]): OsmDaysOfWeek => days[0] ?? 'Mo';
 
-  return [];
+const lastDay = (days: OsmDaysOfWeek[]): OsmDaysOfWeek => days[days.length - 1] ?? 'Su';
+
+const withHours =
+  (osmHours: string) =>
+  (group: OsmWeekOpeningHours): boolean =>
+    group.osmHours === osmHours;
+
+const withDay =
+  (day: OsmDaysOfWeek, osmHours: string) =>
+  (group: OsmWeekOpeningHours): OsmWeekOpeningHours =>
+    withHours(osmHours)(group) ? { ...group, days: [...group.days, day].sort(byDayOfWeek) } : group;
+
+const groupDaysByHours = (groups: OsmWeekOpeningHours[], { day, osmHours }: OsmOpeningHours): OsmWeekOpeningHours[] =>
+  groups.some(withHours(osmHours)) ? groups.map(withDay(day, osmHours)) : [...groups, { days: [day], osmHours }];
+
+const isClosedOn =
+  (openDays: OsmDaysOfWeek[]) =>
+  (day: OsmDaysOfWeek): boolean =>
+    !openDays.includes(day);
+
+const daysSkippedBy = (days: OsmDaysOfWeek[]): OsmDaysOfWeek[] =>
+  OSM_DAYS_OF_WEEK.slice(dayIndex(firstDay(days)), dayIndex(lastDay(days)) + 1).filter(isClosedOn(days));
+
+const spansOnlyClosedDays =
+  (openDays: OsmDaysOfWeek[]) =>
+  (group: OsmWeekOpeningHours): boolean =>
+    isDaysRange(group.days) && daysSkippedBy(group.days).every(isClosedOn(openDays));
+
+const toConsecutiveDays = (runs: OsmDaysOfWeek[][], day: OsmDaysOfWeek): OsmDaysOfWeek[][] => {
+  const previousRun: OsmDaysOfWeek[] | undefined = runs[runs.length - 1];
+  return previousRun != null && dayIndex(lastDay(previousRun)) + 1 === dayIndex(day)
+    ? [...runs.slice(0, -1), [...previousRun, day]]
+    : [...runs, [day]];
 };
 
-const withoutDaysOff = (group: OsmWeekOpeningHours): boolean => group.osmHours !== 'off';
+const formatDaysRange = (days: OsmDaysOfWeek[]): string => `${firstDay(days)}-${lastDay(days)}`;
 
-const withDaysOff = (group: OsmWeekOpeningHours): boolean => group.osmHours === 'off';
+const formatRun = (days: OsmDaysOfWeek[]): string => (isDaysRange(days) ? formatDaysRange(days) : days.join(','));
 
-const appendOffHours = (
-  openingHoursGroupDaysByHours: OsmWeekOpeningHours[],
-  currentOpeningHours: OsmWeekOpeningHours
-): OsmWeekOpeningHours[] => [
-  ...openingHoursGroupDaysByHours.filter(withoutDaysOff),
-  currentOpeningHours,
-  ...getDaysOff(currentOpeningHours, openingHoursGroupDaysByHours.find(withDaysOff))
-];
+const formatDays = (days: OsmDaysOfWeek[]): string => days.reduce(toConsecutiveDays, []).map(formatRun).join(',');
 
-const appendToExistingOpeningHoursGroup = (
-  existingOpeningHoursGroup: OsmWeekOpeningHours,
-  currentOpeningHours: OsmOpeningHours
-): OsmWeekOpeningHours[] => [
-  {
-    days: [...existingOpeningHoursGroup.days, currentOpeningHours.day],
-    osmHours: currentOpeningHours.osmHours
-  }
-];
+const formatGroupDays =
+  (openDays: OsmDaysOfWeek[]) =>
+  (group: OsmWeekOpeningHours): string =>
+    spansOnlyClosedDays(openDays)(group) ? formatDaysRange(group.days) : formatDays(group.days);
 
-const newOpeningHoursGroup = (currentOpeningHours: OsmOpeningHours): OsmWeekOpeningHours[] => [
-  {
-    days: [currentOpeningHours.day],
-    osmHours: currentOpeningHours.osmHours
-  }
-];
+const isFirstOccurrence = (day: OsmDaysOfWeek, index: number, days: OsmDaysOfWeek[]): boolean => days.indexOf(day) === index;
 
-const updateOpeningHoursGroupDaysByHours = (
-  currentOpeningHours: OsmOpeningHours,
-  existingOpeningHoursGroup?: OsmWeekOpeningHours
-): OsmWeekOpeningHours[] =>
-  existingOpeningHoursGroup == null
-    ? newOpeningHoursGroup(currentOpeningHours)
-    : appendToExistingOpeningHoursGroup(existingOpeningHoursGroup, currentOpeningHours);
+const daysOffSkippedBy = (groups: OsmWeekOpeningHours[], openDays: OsmDaysOfWeek[]): OsmDaysOfWeek[] =>
+  groups
+    .filter(spansOnlyClosedDays(openDays))
+    .flatMap((group: OsmWeekOpeningHours): OsmDaysOfWeek[] => daysSkippedBy(group.days))
+    .filter(isFirstOccurrence)
+    .sort(byDayOfWeek);
 
-const updatingOpeningHoursGroups =
-  (currentOpeningHour: OsmOpeningHours) =>
-  (openingHours: OsmWeekOpeningHours): boolean =>
-    openingHours.osmHours !== currentOpeningHour.osmHours && !openingHours.osmHours.includes('off');
+const daysOffRule = (daysOff: OsmDaysOfWeek[]): string[] => (daysOff.length > 0 ? [`${formatDays(daysOff)} off`] : []);
 
-const existingOpeningHoursGroupFor =
-  (currentOpeningHours: OsmOpeningHours) =>
-  (openingHours: OsmWeekOpeningHours): boolean =>
-    openingHours.osmHours === currentOpeningHours.osmHours;
+const byFirstDayOfWeek = (group1: OsmWeekOpeningHours, group2: OsmWeekOpeningHours): number =>
+  byDayOfWeek(firstDay(group1.days), firstDay(group2.days));
 
-const formatDays = (days: OsmDaysOfWeek[]): string =>
-  isDaysRange(days) ? [days[0], days[days.length - 1]].join('-') : days.join(',');
+const byRange = (group1: OsmWeekOpeningHours, group2: OsmWeekOpeningHours): number => group2.days.length - group1.days.length;
 
-const toOSMOpeningHoursStrings = (osmOpeningHours: string[], openingHours: OsmWeekOpeningHours): string[] => [
-  ...osmOpeningHours,
-  `${formatDays(openingHours.days)} ${openingHours.osmHours}`
-];
+const toOsmRule =
+  (openDays: OsmDaysOfWeek[]) =>
+  (group: OsmWeekOpeningHours): string =>
+    `${formatGroupDays(openDays)(group)} ${group.osmHours}`;
 
-const byDayOfWeek = (osmOpeningHours1: OsmWeekOpeningHours, osmOpeningHours2: OsmWeekOpeningHours): number =>
-  OSM_DAYS_OF_WEEK.findIndex(ofDay(osmOpeningHours1.days[0])) - OSM_DAYS_OF_WEEK.findIndex(ofDay(osmOpeningHours2.days[0]));
+const openDaysOf = (horaires: OsmOpeningHours[]): OsmDaysOfWeek[] =>
+  horaires.map(({ day }: OsmOpeningHours): OsmDaysOfWeek => day);
 
-const byRange = (osmOpeningHours1: OsmWeekOpeningHours, osmOpeningHours2: OsmWeekOpeningHours): number =>
-  osmOpeningHours2.days.length - osmOpeningHours1.days.length;
-
-const groupOpeningHoursDaysByHours = (
-  openingHoursGroupDaysByHours: OsmWeekOpeningHours[],
-  currentOpeningHours: OsmOpeningHours
-): OsmWeekOpeningHours[] => [
-  ...openingHoursGroupDaysByHours.filter(updatingOpeningHoursGroups(currentOpeningHours)),
-  ...updateOpeningHoursGroupDaysByHours(
-    currentOpeningHours,
-    openingHoursGroupDaysByHours.find(existingOpeningHoursGroupFor(currentOpeningHours))
-  )
+const toOsmRules = (groups: OsmWeekOpeningHours[], openDays: OsmDaysOfWeek[]): string[] => [
+  ...groups.map(toOsmRule(openDays)),
+  ...daysOffRule(daysOffSkippedBy(groups, openDays))
 ];
 
 export const fromTimetableOsmOpeningHours = (horaires: OsmOpeningHours[]): string =>
-  horaires
-    .reduce(groupOpeningHoursDaysByHours, [])
-    .sort(byDayOfWeek)
-    .sort(byRange)
-    .reduce(appendOffHours, [])
-    .reduce(toOSMOpeningHoursStrings, [])
-    .join('; ')
-    .replace('Mo-Su ', '');
+  toOsmRules(horaires.reduce(groupDaysByHours, []).sort(byFirstDayOfWeek).sort(byRange), openDaysOf(horaires)).join('; ');

@@ -411,7 +411,7 @@ describe('osm opening hours', (): void => {
 
     const osmOpeningHours: string = fromTimetableOpeningHours(timetableOpeningHours);
 
-    expect(osmOpeningHours).toBe('08:00-12:00,15:00-18:00');
+    expect(osmOpeningHours).toBe('Mo-Su 08:00-12:00,15:00-18:00');
   });
 
   it('devrait convertir les horaires au format OSM pour une permanence qui est fermée du jeudi au samedi', (): void => {
@@ -448,7 +448,7 @@ describe('osm opening hours', (): void => {
 
     const osmOpeningHours: string = fromTimetableOpeningHours(timetableOpeningHours);
 
-    expect(osmOpeningHours).toBe('08:00-12:00,15:00-18:00; Th-Sa off');
+    expect(osmOpeningHours).toBe('Mo-Su 08:00-12:00,15:00-18:00; Th-Sa off');
   });
 
   it('devrait convertir les horaires au format OSM pour une permanence qui est ouverte sur deux périodes', (): void => {
@@ -560,7 +560,7 @@ describe('osm opening hours', (): void => {
     const osmOpeningHours: string = fromTimetableOpeningHours(timetableOpeningHours);
 
     expect(osmOpeningHours).toBe(
-      'Tu-Fr 09:00-12:00,14:30-17:30; Mo 09:00-12:00,14:30-17:00; We 09:00-12:00,14:00-17:00; Sa 09:00-12:00'
+      'Tu,Th,Fr 09:00-12:00,14:30-17:30; Mo 09:00-12:00,14:30-17:00; We 09:00-12:00,14:00-17:00; Sa 09:00-12:00'
     );
   });
 
@@ -598,7 +598,7 @@ describe('osm opening hours', (): void => {
 
     const osmOpeningHours: string = fromTimetableOpeningHours(timetableOpeningHours);
 
-    expect(osmOpeningHours).toBe('Mo-Fr 16:00-18:30; We 09:30-12:00,14:00-18:30; Sa 09:30-12:30,14:00-17:30; Th off');
+    expect(osmOpeningHours).toBe('Mo,Tu,Fr 16:00-18:30; We 09:30-12:00,14:00-18:30; Sa 09:30-12:30,14:00-17:30');
   });
 
   it('devrait convertir les horaires au format OSM pour une permanence avec 3 jours aux mêmes horaires sans plage horaire', (): void => {
@@ -635,7 +635,7 @@ describe('osm opening hours', (): void => {
 
     const osmOpeningHours: string = fromTimetableOpeningHours(timetableOpeningHours);
 
-    expect(osmOpeningHours).toBe('Tu-Fr 09:00-12:00,14:00-18:00; Mo,Th 14:00-18:00');
+    expect(osmOpeningHours).toBe('Tu,We,Fr 09:00-12:00,14:00-18:00; Mo,Th 14:00-18:00');
   });
 
   it('devrait convertir les horaires au format OSM pour une permanence avec deux plages horaires', (): void => {
@@ -672,6 +672,6 @@ describe('osm opening hours', (): void => {
 
     const osmOpeningHours: string = fromTimetableOpeningHours(timetableOpeningHours);
 
-    expect(osmOpeningHours).toBe('Mo-Sa 09:00-12:00; We-Fr 09:00-12:00,14:00-18:00');
+    expect(osmOpeningHours).toBe('Mo,Tu,Sa 09:00-12:00; We-Fr 09:00-12:00,14:00-18:00');
   });
 });
