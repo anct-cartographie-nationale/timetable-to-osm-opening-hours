@@ -6,4 +6,4 @@ src
 .gitignore
 .prettierignore
 .prettierrc.cjs
-yarn.lock
+pnpm-lock.yaml

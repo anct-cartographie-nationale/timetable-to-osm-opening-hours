@@ -22,10 +22,5 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    uses: romain-cambonie/serenity-workflows/.github/workflows/_build-and-upload-artifact.reusable.yml@master
-
-  validation-matrix:
-    uses: romain-cambonie/serenity-workflows/.github/workflows/_validation-matrix.reusable.yml@master
-    with:
-      commands-as-comma-separated-string: 'lint,prettier.check,test'
+  validation:
+    uses: ./.github/workflows/_validation.yml

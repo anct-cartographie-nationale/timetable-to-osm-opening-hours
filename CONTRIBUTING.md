@@ -10,11 +10,11 @@
 
 - [Git](https://git-scm.com/) :software for distributed version control
 - [Node](https://nodejs.org/) : cross-platform JavaScript runtime environment
-- [Yarn](https://yarnpkg.com/) : Software packaging system
+- [pnpm](https://pnpm.io/) : Software packaging system
 
 ## Recommended
 
-> Node and Yarn can be installed with Node Version Manager [nvm](https://github.com/nvm-sh/nvm) that allows you to quickly install and use different versions of node via the command line.
+> Node can be installed with Node Version Manager [nvm](https://github.com/nvm-sh/nvm), and pnpm with [Corepack](https://nodejs.org/api/corepack.html) or its [standalone installer](https://pnpm.io/installation).
 
 # Installation
 
@@ -27,7 +27,7 @@ git clone git@github.com:anct-cartographie-nationale/timetable-to-osm-opening-ho
 ## 2. Install dependencies
 
 ```shell
-yarn
+pnpm install
 ```
 
 ## 3. Set active Husky hooks as executable

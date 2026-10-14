@@ -30,6 +30,7 @@
     }
   ],
   "license": "MIT",
+  "packageManager": "pnpm@12.4.2",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
@@ -44,7 +45,7 @@
     "test": "jest --config=./.tooling/.jest/jest.config.ts",
     "build.commonjs": "tsc -p ./.tsconfig/tsconfig.cjs.json",
     "build.esm": "tsc -p ./.tsconfig/tsconfig.esm.json",
-    "build": "yarn build.commonjs && yarn build.esm"
+    "build": "pnpm build.commonjs && pnpm build.esm"
   },
   "dependencies": {
     "opening_hours": "^3.8.0"
